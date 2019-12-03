@@ -2,7 +2,7 @@ use std::env;
 use std::fs::File;
 use std::io::prelude::*;
 
-use day2::*;
+use day2b::*;
 
 fn main() -> std::io::Result<()> {
     let input_file = if let Some(arg1) = env::args().nth(1) {

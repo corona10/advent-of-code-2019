@@ -10,35 +10,48 @@ enum OPCODE {
     HALT = 99,
 }
 
+impl OPCODE {
+    fn from_i64(value: i64) -> OPCODE {
+        match value {
+            1 => OPCODE::ADD,
+            2 => OPCODE::MULT,
+            99 => OPCODE::HALT,
+            _ => panic!("Unknown opcode: {}", value),
+        }
+    }
+}
+
 impl Machine {
     pub fn run(self, program: &Vec<i64>) -> i64 {
         let mut halt = false;
         let mut i = 0;
         let mut opcodes = program.clone();
         while !halt && i < opcodes.len() {
-            let opcode = opcodes[i];
-            if opcode == OPCODE::HALT as i64 {
-                halt = true
-            } else if opcode == OPCODE::ADD as i64 {
-                let (one, two, pos) = (
-                    opcodes[i + 1] as usize,
-                    opcodes[i + 2] as usize,
-                    opcodes[i + 3] as usize,
-                );
-                let (one_value, two_value) = (opcodes[one], opcodes[two]);
-                opcodes[pos] = one_value + two_value;
-                i += 4;
-            } else if opcode == OPCODE::MULT as i64 {
-                let (one, two, pos) = (
-                    opcodes[i + 1] as usize,
-                    opcodes[i + 2] as usize,
-                    opcodes[i + 3] as usize,
-                );
-                let (one_value, two_value) = (opcodes[one], opcodes[two]);
-                opcodes[pos] = one_value * two_value;
-                i += 4;
-            } else {
-                panic!("Unexpected opcode: {}", opcode);
+            let opcode = OPCODE::from_i64(opcodes[i]);
+            match opcode {
+                OPCODE::HALT => {
+                    halt = true;
+                }
+                OPCODE::ADD => {
+                    let (one, two, pos) = (
+                        opcodes[i + 1] as usize,
+                        opcodes[i + 2] as usize,
+                        opcodes[i + 3] as usize,
+                    );
+                    let (one_value, two_value) = (opcodes[one], opcodes[two]);
+                    opcodes[pos] = one_value + two_value;
+                    i += 4;
+                }
+                OPCODE::MULT => {
+                    let (one, two, pos) = (
+                        opcodes[i + 1] as usize,
+                        opcodes[i + 2] as usize,
+                        opcodes[i + 3] as usize,
+                    );
+                    let (one_value, two_value) = (opcodes[one], opcodes[two]);
+                    opcodes[pos] = one_value * two_value;
+                    i += 4;
+                }
             }
         }
         opcodes[0]
